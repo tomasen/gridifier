@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  dev-gridifier:
+    image: node:22-slim
+    container_name: dev-gridifier
+    restart: unless-stopped
+    volumes:
+      - $HOME/.npm:/root/.npm:cached # Mount the npm cache
+      - /projects/gridifier:/projects/gridifier
+    tmpfs:
+      - /projects/gridifier/web/.next
+    working_dir: /projects/gridifier/web
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3007:3000" # Adjust if needed
+
+  prod-gridifier:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: prod-gridifier
+    container_name: prod-gridifier
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
+    ports:
+      - "8087:3000" # Adjust if needed

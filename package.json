@@ -1,0 +1,44 @@
+{
+  "name": "gridifier",
+  "version": "1.0.0",
+  "description": "A library for building customized containers from STL files",
+  "main": "dist/lib.js",
+  "types": "dist/lib.d.ts",
+  "author": "Tomasen",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts"
+  },
+  "keywords": [
+    "3d",
+    "stl",
+    "threejs",
+    "csg",
+    "grid",
+    "container"
+  ],
+  "dependencies": {
+    "three": "^0.160.0",
+    "three-bvh-csg": "^0.0.16",
+    "three-mesh-bvh": "^0.7.0"
+  },
+  "peerDependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/three": "^0.160.0",
+    "commander": "^11.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}
