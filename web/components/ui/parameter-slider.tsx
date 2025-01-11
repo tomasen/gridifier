@@ -1,5 +1,7 @@
 import { Input } from "./input"
 import { Slider } from "./slider"
+import React from "react"
+import { debounce } from "lodash"
 
 interface ParameterSliderProps {
     label: string
@@ -22,6 +24,34 @@ export function ParameterSlider({
     className,
     explanation
 }: ParameterSliderProps) {
+    const [currentMax, setCurrentMax] = React.useState(max)
+    const ABSOLUTE_MAX = 1000
+
+    const debouncedSetMax = React.useCallback(
+        React.useMemo(
+            () =>
+                debounce((newValue: number) => {
+                    if (newValue > currentMax * 0.8) {
+                        const newMax = Math.min(currentMax + Math.min(Math.ceil(currentMax * 0.2), 20), ABSOLUTE_MAX)
+                        setCurrentMax(newMax)
+                    }
+                }, 300),
+            [currentMax]
+        ),
+        [currentMax]
+    )
+
+    const handleSliderChange = ([newValue]: number[]) => {
+        debouncedSetMax(newValue)
+        onChange(newValue)
+    }
+
+    React.useEffect(() => {
+        return () => {
+            debouncedSetMax.cancel()
+        }
+    }, [debouncedSetMax])
+
     return (
         <div className={className}>
             <div className="flex justify-between items-center">
@@ -30,19 +60,18 @@ export function ParameterSlider({
                     type="number"
                     value={value}
                     onChange={(e) => {
-                        const newValue = Math.min(Math.max(parseInt(e.target.value) || min, min), max)
+                        const newValue = Math.min(Math.max(parseInt(e.target.value) || min, min), currentMax)
                         onChange(newValue)
                     }}
                     className="w-20 text-right border-0 focus-visible:ring-0"
                 />
-
             </div>
             <Slider
                 value={value ? [value] : undefined}
-                max={max}
+                max={currentMax}
                 min={min}
                 step={step}
-                onValueChange={([newValue]) => onChange(newValue)}
+                onValueChange={handleSliderChange}
             />
             {explanation && <p className="text-sm text-gray-500">{explanation}</p>}
         </div>
